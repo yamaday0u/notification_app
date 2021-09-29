@@ -1,6 +1,12 @@
 # 使用するイメージとバージョンを指定/Gemfileに記載されているバージョンに合わせる
 FROM ruby:2.6.5
 
+# yarnのインストール
+# コマンドは主要なLinuxディストリビューションの1つであるUbuntuというOSのもの（簡単にいうとLinuxの流派の1つ）
+# 参考：https://classic.yarnpkg.com/en/docs/install/#debian-stable（yarn公式サイト）
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+
 # APTのパッケージリストを更新 & 各種パッケージをインストール
 RUN apt-get update -qq && apt-get install -y build-essential libpq-dev nodejs yarn
 
@@ -9,8 +15,8 @@ Run mkdir /notification_app
 WORKDIR /notification_app
 
 # ローカルのGemfileとGemgile.lockをコンテナにコピー（左側がローカル、右側がコンテナ）
-COPY Gemfile notification_app/Gemfile
-COPY Gemfile.lock notification_app/Gemfile.lock
+COPY Gemfile ./Gemfile
+COPY Gemfile.lock ./Gemfile.lock
 
 
 # bundlerでGemfileからgemをインストール
